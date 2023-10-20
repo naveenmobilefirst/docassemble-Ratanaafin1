@@ -1,0 +1,100 @@
+objects:
+  - address: Individual
+---
+mandatory: True
+question: |
+  whats your name?
+fields:
+  Name: name
+---
+mandatory: True
+question: |
+  whats your add name?
+fields:
+  Hey: address.name.first
+
+---
+code: |
+  if age > 18:
+    var = 'hello'
+  else:
+    var = ''
+---
+mandatory: True
+question: |
+  whats is your age?
+fields:
+  Age: age
+  datatype: integer
+---
+mandatory: True
+question: |
+  Upload your image here
+fields:
+  Image: img
+  datatype: file
+  required: False
+  accept: |
+    "image/png, application/pdf"
+---
+mandatory: True
+question: |
+  Please provide the Address. 
+fields:
+  - Street address: address.address.address
+    address autocomplete: True
+  - Unit: address.address.unit
+    required: False
+  - City: address.address.city
+  - State: address.address.state
+  - Zip: address.address.zip
+---
+mandatory: True
+code: |
+  from __future__ import print_function
+  import clicksend_client
+  from clicksend_client import PostRecipient
+  from clicksend_client import FaxMessage
+  from clicksend_client.rest import ApiException
+
+  def send_fax():
+    # Create a new configuration object within this function
+    configuration = clicksend_client.Configuration()
+    configuration.username = 'willie@lexyalgo.com'
+    configuration.password = '150E8868-E005-D4C9-39CB-B7797E269B50'
+
+    # Create an instance of the API class
+    api_instance = clicksend_client.FAXApi(clicksend_client.ApiClient(configuration))
+    file_url = r'C:\Users\laptop\Documents\demo.docx'
+    fax_message_list = [FaxMessage(
+        "sdk", "2134631565")]
+    # FaxMessageCollection | FaxMessageCollection model
+    fax_message = clicksend_client.FaxMessageCollection(file_url=file_url, messages=fax_message_list)
+
+    try:
+        # Send a fax using supplied supported file-types.
+        api_response = api_instance.fax_send_post(fax_message)
+        print(api_response)
+    except ApiException as e:
+        print("Exception when calling FAXApi->fax_send_post: %s\n" % e)
+
+  # Call the functions to send postcards and faxes
+  send_fax()
+---
+mandatory: True
+question: |
+  Here is your document.
+subquestion: |
+  Does it meet your approval?
+attachment code: |
+  [demo]
+yesno: user_approves
+---
+attachment:
+  name: Your letter
+  filename: letter
+  variable name: demo
+  docx template file: demo_2_1.docx
+  valid formats:
+    - pdf
+    - docx
